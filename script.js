@@ -10,10 +10,18 @@ document.addEventListener("click", function (e) {
     handleReplyClick(e.target.dataset.reply);
   } else if (e.target.id === "tweet-btn") {
     handleTweetBtnClick();
+  } else if (e.target.dataset.replyBtn) {
+    handleReplyBtnClick(e.target.dataset.replyBtn);
+  } else if (e.target.dataset.replyDelete) {
+    handleDeleteReplyBtnClick(e.target.dataset.replyDelete);
   } else if (e.target.dataset.delete) {
     handleDeleteBtnClick(e.target.dataset.delete);
   }
 });
+
+function saveTweets() {
+  localStorage.setItem("tweets", JSON.stringify(tweetsData));
+}
 
 function handleLikeClick(tweetId) {
   const targetTweetObj = tweetsData.filter(function (tweet) {
@@ -26,7 +34,7 @@ function handleLikeClick(tweetId) {
     targetTweetObj.likes++;
   }
   targetTweetObj.isLiked = !targetTweetObj.isLiked;
-  localStorage.setItem("tweets", JSON.stringify(tweetsData));
+  saveTweets();
   render();
 }
 
@@ -41,7 +49,7 @@ function handleRetweetClick(tweetId) {
     targetTweetObj.retweets++;
   }
   targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted;
-  localStorage.setItem("tweets", JSON.stringify(tweetsData));
+  saveTweets();
   render();
 }
 
@@ -62,11 +70,61 @@ function handleTweetBtnClick() {
       replies: [],
       isLiked: false,
       isRetweeted: false,
+      isOwner: true,
       uuid: uuidv4(),
     });
-    localStorage.setItem("tweets", JSON.stringify(tweetsData));
+    saveTweets();
     render();
     tweetInput.value = "";
+  }
+}
+
+function handleReplyBtnClick(btnId) {
+  const replyInput = document.getElementById(btnId);
+  if (replyInput.value) {
+    const targetTweet = tweetsData.filter(function (tweet) {
+      return tweet.uuid === btnId;
+    })[0];
+    targetTweet.replies.push({
+      handle: `@Farel`,
+      profilePic: `images/user-avatar.jpg`,
+      tweetText: replyInput.value,
+      uuid: uuidv4(),
+      isOwner: true,
+    });
+  }
+  saveTweets();
+  render();
+  document.getElementById(`replies-${btnId}`).classList.remove("hidden");
+}
+
+function handleDeleteReplyBtnClick(deleteId) {
+  if (confirm("Apakah Anda yakin ingin menghapus tweet ini?")) {
+    const targetTweet = tweetsData.filter(function (tweet) {
+      return tweet.replies.some(function (reply) {
+        return reply.uuid === deleteId;
+      });
+    })[0];
+    const replyIndex = targetTweet.replies.findIndex(function (reply) {
+      return reply.uuid === deleteId;
+    });
+    targetTweet.replies.splice(replyIndex, 1);
+    saveTweets();
+    render();
+    document
+      .getElementById(`replies-${targetTweet.uuid}`)
+      .classList.remove("hidden");
+  }
+}
+
+function handleDeleteBtnClick(deleteId) {
+  if (confirm("Apakah Anda yakin ingin menghapus tweet ini?")) {
+    const targetIndex = tweetsData.findIndex(function (index) {
+      return index.uuid === deleteId;
+    });
+    tweetsData.splice(targetIndex, 1);
+    saveTweets();
+    render();
   }
 }
 
@@ -75,16 +133,6 @@ function loadTweetsFromStorage() {
   if (storedTweets) {
     tweetsData.splice(0, tweetsData.length, ...storedTweets);
   }
-}
-
-function handleDeleteBtnClick(deleteId) {
-  confirm("Apakah Anda yakin ingin menghapus tweet ini?");
-  const targetIndex = tweetsData.findIndex(function (index) {
-    return index.uuid === deleteId;
-  });
-  tweetsData.splice(targetIndex, 1);
-  localStorage.setItem("tweets", JSON.stringify(tweetsData));
-  render();
 }
 
 function getFeedHtml() {
@@ -114,8 +162,9 @@ function getFeedHtml() {
             <div>
                 <p class="handle">${reply.handle}</p>
                 <p class="tweet-text">${reply.tweetText}</p>
+                ${reply.isOwner ? `<i class="fa-solid fa-trash" data-reply-delete="${reply.uuid}"></i>` : ""}
             </div>
-        </div>
+    </div>
 </div>
 `;
       });
@@ -147,13 +196,26 @@ function getFeedHtml() {
                     ></i>
                     ${tweet.retweets}
                 </span>
+                <span class ="tweet-detail">
+                ${tweet.isOwner ? `<i class="fa-solid fa-trash" data-delete="${tweet.uuid}"></i>` : ""}
+                </span>
             </div>   
         </div>  
-        <i class="fa-solid fa-circle-minus" data-delete="${tweet.uuid}"></i>
+       
     </div>
     <div class="hidden" id="replies-${tweet.uuid}">
         ${repliesHtml}
-    </div>   
+      <div class="tweet-reply">
+        <div class="tweet-inner input">
+        <img src="images/user-avatar.jpg" class="profile-pic">
+            <div class="form__group field">
+                <input type="text" class="form__field" placeholder="Post your reply" name="reply-${tweet.uuid}" id='${tweet.uuid}' data-reply-input="${tweet.uuid}" >
+                <label for="${tweet.uuid}" class="form__label">Post your reply</label>
+            </div>
+            <button class="reply-btn" data-reply-btn="${tweet.uuid}">Reply</button>
+        </div>
+      </div>
+    </div>
 </div>
 `;
   });

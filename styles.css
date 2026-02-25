@@ -28,7 +28,7 @@ i:hover {
   color: #999;
 }
 
-.fa-circle-minus:hover {
+.fa-trash:hover {
   color: rgb(219, 5, 5);
 }
 
@@ -42,14 +42,10 @@ i:hover {
 
 /* layout */
 
-main,
-header {
+main {
   width: 290px;
   margin: 0 auto;
   padding: 15px 20px;
-}
-
-main {
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
@@ -63,7 +59,7 @@ header {
   gap: 10px;
 }
 
-/* textareas + btn */
+/* textareas + btn + input */
 
 textarea {
   border: none;
@@ -89,10 +85,85 @@ button {
   transition: all 0.3s ease;
 }
 
+.reply-btn {
+  font-size: 12px;
+  width: 25%;
+  padding: 7px 8px;
+  transition: none;
+  align-self: center;
+}
+
+.reply-btn:hover,
+.reply-btn:active {
+  transform: none;
+  letter-spacing: 0px;
+}
+
 button:hover,
 button:active {
   transform: scale(1.05);
   letter-spacing: 2px;
+}
+
+.form__group {
+  position: relative;
+  padding: 15px 0 0;
+  width: 50%;
+}
+
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid #9b9b9b;
+  outline: 0;
+  font-size: 14px;
+  color: black;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:placeholder-shown ~ .form__label {
+    font-size: 14px;
+    cursor: text;
+    top: 20px;
+  }
+}
+
+.form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 14px;
+  color: #9b9b9b;
+}
+
+.form__field:focus {
+  ~ .form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 14px;
+    color: #1da1f2;
+    font-weight: 700;
+  }
+  padding-bottom: 6px;
+  border-width: 3px;
+  border-image: linear-gradient(to right, #1da1f2, #0887c2);
+  border-image-slice: 1;
+}
+/* reset input */
+.form__field {
+  &:required,
+  &:invalid {
+    box-shadow: none;
+  }
 }
 
 /* tweet */
