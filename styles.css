@@ -1,9 +1,14 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
   font-family: "Roboto", sans-serif;
-  box-sizing: border-box;
 }
 
 /* typography and icons */
@@ -43,7 +48,7 @@ i:hover {
 /* layout */
 
 main {
-  width: 290px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 15px 20px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -171,21 +176,24 @@ button:active {
 .tweet {
   border-top: 1px solid lightgray;
   padding: 20px 0 0 0;
-  width: 100%;
   margin: 15px 0;
 }
 
 .tweet-inner {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 15px;
+}
+
+.tweet-inner > div {
+  flex: 1;
+  min-width: 0;
 }
 
 .tweet-details {
   display: flex;
   font-size: 13px;
   justify-content: space-between;
-  width: 160px;
 }
 
 .tweet-detail {
@@ -208,7 +216,7 @@ button:active {
 }
 
 .tweet-text {
-  width: 207px;
+  width: 100%;
   font-size: 14px;
   line-height: 20px;
 }
@@ -224,4 +232,56 @@ button:active {
 /* utility */
 .hidden {
   display: none;
+}
+
+@media (min-width: 992px) {
+  main {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  main {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  main {
+    max-width: 420px;
+    padding: 15px 16px;
+  }
+
+  textarea {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  main {
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  textarea {
+    font-size: 16px;
+    height: 50px;
+  }
+
+  button {
+    font-size: 18px;
+  }
+
+  .tweet-reply {
+    margin-left: 20px;
+    width: 90%;
+  }
+
+  .tweet-details {
+    display: flex;
+  }
 }
